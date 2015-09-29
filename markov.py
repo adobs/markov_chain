@@ -1,7 +1,9 @@
 from random import choice
+from sys import argv
+#first variable in argv is source 
+source, argv1, argv2 = argv
 
-
-def open_and_read_file(file_path):
+def open_and_read_file(file_path, file_path2=None):
     """Takes file path as string; returns text as string.
 
     Takes a string that is a file path, opens the file, and turns
@@ -10,7 +12,14 @@ def open_and_read_file(file_path):
 
     # your code goes here
     log_file = open(file_path)
-    text = log_file.read()
+
+    if file_path2 != None:
+        log_file2 = open(file_path2)
+        text = log_file.read() + " " + log_file2.read()
+        log_file2.close()
+    else:
+        text = log_file.read()
+    
     log_file.close()
 
     return text
@@ -86,36 +95,41 @@ def make_chains(text_string):
 
 def make_text(chains):
     """Takes dictionary of markov chains; returns random text."""
-    answer = []
+   
     text = ""
 
-    # pick a random tuple from the dictionary.  
     # return that tuple plus one of the values from the key/list.  
     # now, use the second word from the tuple plus the random word 
     # from the list as our next tuple
     # starting_tuple = ('iterate', 'over')
 
+    ######################
+    # pick a random tuple from the dictionary.  
+    next_tuple = choice(chains.keys())
+    # add the tuple to the text string
+    text = str(next_tuple[0]) +" " +str(next_tuple[1])
+    
+    while next_tuple in chains:
+        next_value = choice(chains[next_tuple])
+        text = text + " " + str(next_value)
+        next_tuple = tuple([next_tuple[1], next_value])
+
+    # find a random value from the key/tuple
+
+    # add that random value to the string
+    # tuple(1 of last tuple, random value)
+    # find the random value
+    # add that to the string
 
 
-    def looping_through(word1,word2,chains):
-        #for a random number in lenth of the value at key, return index[random]
-        value = chains[tuple([word1,word2])]
-        print value
-        next_word = choice(value)
-
-        answer.extend([word1, word2, next_word])
-
-        return looping_through(answer[-2],answer[-1], chains)
-
-    looping_through("Would","you",chains)
-
-    # return text
+    return text
 
 
 input_path = "green-eggs.txt"
+input_path2 = "gettysburg.txt"
 
 # Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+input_text = open_and_read_file(argv1, argv2)
 
 # Get a Markov chain
 chains = make_chains(input_text)
